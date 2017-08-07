@@ -7,6 +7,12 @@ export default class extends Phaser.Sprite {
   }
 
   update () {
-    this.angle += 1
+    const cursors = game.input.keyboard.createCursorKeys();
+    if (cursors.right.isDown) {
+      this.angle += 0.5
+    }
+    if (cursors.left.isDown) {
+      this.angle -= 0.5
+    }
   }
 }
