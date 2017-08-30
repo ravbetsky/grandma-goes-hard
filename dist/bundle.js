@@ -10763,7 +10763,7 @@ window.game = new Game();
     //
     // load your assets
     //
-    this.load.image('mushroom', 'assets/images/mushroom2.png');
+    this.load.image('player', 'assets/images/grandma.png');
   }
 
   create() {
@@ -10801,7 +10801,7 @@ const centerGameObjects = objects => {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(/*! phaser */ 46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_Mushroom__ = __webpack_require__(/*! ../sprites/Mushroom */ 343);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_Player__ = __webpack_require__(/*! ../sprites/Player */ 346);
 /* globals __DEV__ */
 
 
@@ -10811,64 +10811,38 @@ const centerGameObjects = objects => {
   preload() {}
 
   create() {
-    const bannerText = 'Phaser + ES6 + Webpack';
-    let banner = this.add.text(this.world.centerX, this.game.height - 80, bannerText);
-    banner.font = 'Bangers';
-    banner.padding.set(10, 16);
-    banner.fontSize = 40;
-    banner.fill = '#77BFA3';
-    banner.smoothed = false;
-    banner.anchor.setTo(0.5);
 
-    this.mushroom = new __WEBPACK_IMPORTED_MODULE_1__sprites_Mushroom__["a" /* default */]({
+    this.game.physics.startSystem(__WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Physics.ARCADE);
+
+    this.player = new __WEBPACK_IMPORTED_MODULE_1__sprites_Player__["a" /* default */]({
       game: this.game,
       x: this.world.centerX,
       y: this.world.centerY,
-      asset: 'mushroom'
+      asset: 'player'
     });
 
-    this.game.add.existing(this.mushroom);
+    this.game.add.existing(this.player);
+
+    game.physics.enable(this.player, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Physics.ARCADE);
+
+    this.player.fartTween = game.add.tween(this.player).to({ angle: 360 }, 800, "Quart.easeOut");
+    this.player.fartTween.target.pivot.x = 12;
+    this.player.fartTween.target.pivot.y = 17;
+
+    this.player.body.gravity.y = 760;
+
+    this.player.body.collideWorldBounds = true;
   }
 
   render() {
     if (true) {
-      this.game.debug.spriteInfo(this.mushroom, 32, 32);
+      this.game.debug.spriteInfo(this.player, 24, 34);
     }
   }
 });
 
 /***/ }),
-/* 343 */
-/*!*********************************!*\
-  !*** ./src/sprites/Mushroom.js ***!
-  \*********************************/
-/*! exports provided: default */
-/*! exports used: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(/*! phaser */ 46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
-
-
-/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite {
-  constructor({ game, x, y, asset }) {
-    super(game, x, y, asset);
-    this.anchor.setTo(0.5);
-  }
-
-  update() {
-    const cursors = game.input.keyboard.createCursorKeys();
-    if (cursors.right.isDown) {
-      this.angle += 0.5;
-    }
-    if (cursors.left.isDown) {
-      this.angle -= 0.5;
-    }
-  }
-});
-
-/***/ }),
+/* 343 */,
 /* 344 */
 /*!***********************!*\
   !*** ./src/config.js ***!
@@ -10881,7 +10855,84 @@ const centerGameObjects = objects => {
 /* harmony default export */ __webpack_exports__["a"] = ({
   gameWidth: 760,
   gameHeight: 400,
-  localStorageName: 'phaseres6webpack'
+  localStorageName: 'grandmagoeshard'
+});
+
+/***/ }),
+/* 345 */,
+/* 346 */
+/*!*******************************!*\
+  !*** ./src/sprites/Player.js ***!
+  \*******************************/
+/*! exports provided: default */
+/*! exports used: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(/*! phaser */ 46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
+
+
+/* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite {
+  constructor({ game, x, y, asset }) {
+    super(game, x, y, asset);
+    this.canFart = false;
+    this.fartCounts = 1;
+    this.sideIndex = 0;
+    this.sides = ["right", "left"];
+  }
+
+  update() {
+    const cursors = game.input.keyboard.createCursorKeys();
+
+    this.body.velocity.x = 0;
+
+    if (this.body.onFloor()) {
+      this.canFart = false;
+      this.fartCounts = 1;
+    }
+
+    // Move right
+    if (cursors.right.isDown) {
+      this.sideIndex = 0;
+      this.body.velocity.x = 220;
+    }
+
+    // Move left
+    if (cursors.left.isDown) {
+      this.sideIndex = 1;
+      this.body.velocity.x = -220;
+    }
+
+    if (cursors.up.isUp && this.fartCounts > 0) {
+      this.canFart = true;
+    }
+
+    if (this.sides[this.sideIndex] == "left") {
+      this.fartTween.updateTweenData("angle", -360);
+    }
+
+    if (this.sides[this.sideIndex] == "right") {
+      this.fartTween.updateTweenData("angle", 360);
+    }
+
+    // Jump
+    if (cursors.up.isDown) {
+      if (this.body.onFloor()) {
+        this.body.velocity.y = -250;
+      } else {
+        if (this.canFart) {
+          this.body.velocity.y = -300;
+          this.canFart = false;
+          if (!this.fartTween.isRunning) {
+            console.log(this.fartTween);
+            this.fartTween.start();
+          }
+          this.fartCounts--;
+        }
+      }
+    }
+  }
 });
 
 /***/ })

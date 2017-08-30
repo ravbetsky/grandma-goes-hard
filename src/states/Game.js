@@ -1,34 +1,38 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
-import Mushroom from '../sprites/Mushroom'
+import Player from '../sprites/Player'
 
 export default class extends Phaser.State {
   init () {}
   preload () {}
 
   create () {
-    const bannerText = 'Phaser + ES6 + Webpack'
-    let banner = this.add.text(this.world.centerX, this.game.height - 80, bannerText)
-    banner.font = 'Bangers'
-    banner.padding.set(10, 16)
-    banner.fontSize = 40
-    banner.fill = '#77BFA3'
-    banner.smoothed = false
-    banner.anchor.setTo(0.5)
 
-    this.mushroom = new Mushroom({
+    this.game.physics.startSystem(Phaser.Physics.ARCADE)
+
+    this.player = new Player({
       game: this.game,
       x: this.world.centerX,
       y: this.world.centerY,
-      asset: 'mushroom'
+      asset: 'player'
     })
 
-    this.game.add.existing(this.mushroom)
+    this.game.add.existing(this.player)
+
+    game.physics.enable(this.player, Phaser.Physics.ARCADE);
+
+    this.player.fartTween = game.add.tween(this.player).to( { angle: 360 }, 800, "Quart.easeOut");
+    this.player.fartTween.target.pivot.x = 12
+    this.player.fartTween.target.pivot.y = 17
+
+    this.player.body.gravity.y = 760;
+
+    this.player.body.collideWorldBounds = true;
   }
 
   render () {
     if (__DEV__) {
-      this.game.debug.spriteInfo(this.mushroom, 32, 32)
+      this.game.debug.spriteInfo(this.player, 24, 34)
     }
   }
 }
