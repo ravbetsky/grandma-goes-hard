@@ -10763,7 +10763,10 @@ window.game = new Game();
     //
     // load your assets
     //
-    this.load.image('player', 'assets/images/grandma.png');
+    this.load.tilemap('map', 'assets/map_01.json', null, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Tilemap.TILED_JSON);
+    this.load.image('bg', 'assets/images/bg.png');
+    this.load.image('ground', 'assets/images/ground.png');
+    this.load.spritesheet('player', 'assets/images/grandma.png', 28, 37, 8);
   }
 
   create() {
@@ -10801,7 +10804,7 @@ const centerGameObjects = objects => {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser__ = __webpack_require__(/*! phaser */ 46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_phaser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_phaser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_Player__ = __webpack_require__(/*! ../sprites/Player */ 346);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sprites_Player__ = __webpack_require__(/*! ../sprites/Player */ 343);
 /* globals __DEV__ */
 
 
@@ -10818,49 +10821,51 @@ const centerGameObjects = objects => {
       game: this.game,
       x: this.world.centerX,
       y: this.world.centerY,
-      asset: 'player'
+      asset: 'player',
+      frame: 3
     });
+
+    let bg = game.add.tileSprite(0, 0, 512, 384, 'bg');
+    bg.fixedToCamera = true;
+
+    this.map = this.game.add.tilemap('map');
+
+    this.map.addTilesetImage('ground');
+
+    this.layer = this.map.createLayer('platforms');
+
+    this.layer.resizeWorld();
+
+    this.map.setCollisionBetween(1, 12);
+
+    this.layer.debug = true;
 
     this.game.add.existing(this.player);
 
-    game.physics.enable(this.player, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Physics.ARCADE);
+    this.game.camera.follow(this.player);
+
+    this.game.physics.enable(this.player, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Physics.ARCADE);
 
     this.player.fartTween = game.add.tween(this.player).to({ angle: 360 }, 800, "Quart.easeOut");
     this.player.fartTween.target.pivot.x = 12;
     this.player.fartTween.target.pivot.y = 17;
 
     this.player.body.gravity.y = 760;
+  }
 
-    this.player.body.collideWorldBounds = true;
+  update() {
+    this.game.physics.arcade.collide(this.player, this.layer);
   }
 
   render() {
     if (true) {
-      this.game.debug.spriteInfo(this.player, 24, 34);
+      this.game.debug.spriteInfo(this.player, 36, 36);
     }
   }
 });
 
 /***/ }),
-/* 343 */,
-/* 344 */
-/*!***********************!*\
-  !*** ./src/config.js ***!
-  \***********************/
-/*! exports provided: default */
-/*! exports used: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony default export */ __webpack_exports__["a"] = ({
-  gameWidth: 760,
-  gameHeight: 400,
-  localStorageName: 'grandmagoeshard'
-});
-
-/***/ }),
-/* 345 */,
-/* 346 */
+/* 343 */
 /*!*******************************!*\
   !*** ./src/sprites/Player.js ***!
   \*******************************/
@@ -10874,8 +10879,8 @@ const centerGameObjects = objects => {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (class extends __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Sprite {
-  constructor({ game, x, y, asset }) {
-    super(game, x, y, asset);
+  constructor({ game, x, y, asset, frame }) {
+    super(game, x, y, asset, frame);
     this.canFart = false;
     this.fartCounts = 1;
     this.sideIndex = 0;
@@ -10933,6 +10938,22 @@ const centerGameObjects = objects => {
       }
     }
   }
+});
+
+/***/ }),
+/* 344 */
+/*!***********************!*\
+  !*** ./src/config.js ***!
+  \***********************/
+/*! exports provided: default */
+/*! exports used: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony default export */ __webpack_exports__["a"] = ({
+  gameWidth: 512,
+  gameHeight: 384,
+  localStorageName: 'grandmagoeshard'
 });
 
 /***/ })
