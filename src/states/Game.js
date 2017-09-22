@@ -15,13 +15,15 @@ export default class extends Phaser.State {
       x: this.world.centerX,
       y: this.world.centerY,
       asset: 'player',
-      frame: 3
+      frame: 0
     })
 
     let bg = game.add.tileSprite(0, 0, 512, 384, 'bg');
     bg.fixedToCamera = true;
 
     this.map = this.game.add.tilemap('map')
+    
+    this.world.sc
 
     this.map.addTilesetImage('ground')
 
@@ -30,8 +32,6 @@ export default class extends Phaser.State {
     this.layer.resizeWorld()
 
     this.map.setCollisionBetween(1, 12)
-
-    this.layer.debug = true;
 
     this.game.add.existing(this.player)
 

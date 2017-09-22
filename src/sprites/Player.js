@@ -5,10 +5,11 @@ export default class extends Phaser.Sprite {
     super(game, x, y, asset, frame)
     this.canFart = false;
     this.fartCounts = 1;
-    this.sideIndex = 0
-    this.sides = ["right", "left"]
+    this.currentFrame = 0
+    this.animations.add("right", [0, 1, 2], 10, true)
+    this.animations.add("left", [4, 5, 6], 10, true)
   }
-
+  
   update () {
     const cursors = game.input.keyboard.createCursorKeys();
 
@@ -17,30 +18,37 @@ export default class extends Phaser.Sprite {
     if (this.body.onFloor()) {
       this.canFart = false;
       this.fartCounts = 1;
+    } else {
+      this.animations.stop();
+      this.animations.frame = this.currentFrame;
     }
 
     // Move right
     if (cursors.right.isDown) {
-      this.sideIndex = 0
+      this.currentFrame = 0
       this.body.velocity.x = 220;
+      this.animations.play("right");
     }
-
     // Move left
-    if (cursors.left.isDown) {
-      this.sideIndex = 1
+    else if (cursors.left.isDown) {
+      this.currentFrame = 4
       this.body.velocity.x = -220;
+      this.animations.play("left");
     }
-
+    else {
+      this.animations.stop();
+      this.animations.frame = this.currentFrame;
+    }
+    
     if (cursors.up.isUp && this.fartCounts > 0)  {
       this.canFart = true;
     }
-
+    
     // Jump
     if (cursors.up.isDown) {
       if (this.body.onFloor()) {
         this.body.velocity.y = -250;
       } else {
-        console.log(this.canFart);
         if (this.canFart) {
           this.body.velocity.y = -300;
           this.canFart = false;
