@@ -35,26 +35,15 @@ export default class extends Phaser.Sprite {
       this.canFart = true;
     }
 
-    if (this.sides[this.sideIndex] == "left") {
-      this.fartTween.updateTweenData("angle", -360)
-    }
-
-    if (this.sides[this.sideIndex] == "right") {
-      this.fartTween.updateTweenData("angle", 360)
-    }
-
     // Jump
     if (cursors.up.isDown) {
       if (this.body.onFloor()) {
         this.body.velocity.y = -250;
       } else {
+        console.log(this.canFart);
         if (this.canFart) {
           this.body.velocity.y = -300;
           this.canFart = false;
-          if (!this.fartTween.isRunning) {
-            console.log(this.fartTween);
-            this.fartTween.start();
-          }
           this.fartCounts--;
         }
       }

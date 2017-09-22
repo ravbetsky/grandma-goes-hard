@@ -39,10 +39,6 @@ export default class extends Phaser.State {
 
     this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-    this.player.fartTween = game.add.tween(this.player).to( { angle: 360 }, 800, "Quart.easeOut");
-    this.player.fartTween.target.pivot.x = 12
-    this.player.fartTween.target.pivot.y = 17
-
     this.player.body.gravity.y = 760;
 
   }
