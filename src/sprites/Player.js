@@ -28,12 +28,16 @@ export default class extends Phaser.Sprite {
       this.currentFrame = 0
       this.body.velocity.x = 220;
       this.animations.play("right");
+      this.weapon.trackOffset.x = this.body.width;
+      this.weapon.fireAngle = 0
     }
     // Move left
     else if (cursors.left.isDown) {
       this.currentFrame = 4
       this.body.velocity.x = -220;
       this.animations.play("left");
+      this.weapon.trackOffset.x = 0;
+      this.weapon.fireAngle = 180
     }
     else {
       this.animations.stop();
@@ -43,6 +47,7 @@ export default class extends Phaser.Sprite {
     if (cursors.up.isUp && this.fartCounts > 0)  {
       this.canFart = true;
     }
+  
     
     // Jump
     if (cursors.up.isDown) {

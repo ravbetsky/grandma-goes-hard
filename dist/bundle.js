@@ -10690,6 +10690,7 @@ window.game = new Game();
     this.load.tilemap('map', 'assets/map_01.json', null, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Tilemap.TILED_JSON);
     this.load.image('bg', 'assets/images/bg.png');
     this.load.image('ground', 'assets/images/ground.png');
+    this.load.image('bullet', 'assets/images/bullet.png');
     this.load.spritesheet('player', 'assets/images/grandma.png', 28, 36, 8);
   }
 
@@ -10754,8 +10755,6 @@ const centerGameObjects = objects => {
 
     this.map = this.game.add.tilemap('map');
 
-    this.world.sc;
-
     this.map.addTilesetImage('ground');
 
     this.layer = this.map.createLayer('platforms');
@@ -10771,16 +10770,40 @@ const centerGameObjects = objects => {
     this.game.physics.enable(this.player, __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Physics.ARCADE);
 
     this.player.body.gravity.y = 760;
+
+    this.weapon = game.add.weapon(30, 'bullet');
+
+    //  The bullet will be automatically killed when it leaves the world bounds
+    this.weapon.bulletKillType = __WEBPACK_IMPORTED_MODULE_0_phaser___default.a.Weapon.KILL_WORLD_BOUNDS;
+
+    //  Because our bullet is drawn facing up, we need to offset its rotation:
+    this.weapon.bulletAngleOffset = 180;
+
+    this.weapon.fireAngle = 0;
+
+    //  The speed at which the bullet is fired
+    this.weapon.bulletSpeed = 800;
+
+    //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
+    this.weapon.fireRate = 200;
+
+    this.fireButton = game.input.keyboard.addKey(__WEBPACK_IMPORTED_MODULE_0_phaser___default.a.KeyCode.SPACEBAR);
+
+    this.weapon.trackSprite(this.player, 28, 22);
+
+    this.player.weapon = this.weapon;
   }
 
   update() {
     this.game.physics.arcade.collide(this.player, this.layer);
+
+    if (this.fireButton.isDown) {
+      this.weapon.fire();
+    }
   }
 
   render() {
-    if (true) {
-      this.game.debug.spriteInfo(this.player, 36, 36);
-    }
+    this.weapon.debug();
   }
 });
 
@@ -10826,12 +10849,16 @@ const centerGameObjects = objects => {
       this.currentFrame = 0;
       this.body.velocity.x = 220;
       this.animations.play("right");
+      this.weapon.trackOffset.x = this.body.width;
+      this.weapon.fireAngle = 0;
     }
     // Move left
     else if (cursors.left.isDown) {
         this.currentFrame = 4;
         this.body.velocity.x = -220;
         this.animations.play("left");
+        this.weapon.trackOffset.x = 0;
+        this.weapon.fireAngle = 180;
       } else {
         this.animations.stop();
         this.animations.frame = this.currentFrame;
